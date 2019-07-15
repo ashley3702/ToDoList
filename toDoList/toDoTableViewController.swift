@@ -12,12 +12,32 @@ class toDoTableViewController: UITableViewController {
 
     var toDos : [ToDo] = []
     
+    func createToDos () -> [ToDo] {
+        let swift = ToDo()
+        swift.name = "Learn Swift"
+        swift.important = true
+        
+        let dog = ToDo()
+        dog.name = "Walk the Dog"
+        
+        return [swift,dog]
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         toDos = createToDos ()
     }
-
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return toDos.count
+    }
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        // this gives us a single ToDo
+        let toDo = toDos[indexPath.row]
+        
+//        performSegue(withIdentifier: "moveToComplete", sender: toDo)
+    }
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath : IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for : indexPath)
         
@@ -32,17 +52,6 @@ class toDoTableViewController: UITableViewController {
         return cell
     }
     
-    func createToDos () -> [ToDo] {
-         let swift = ToDo()
-        swift.name = "Learn Swift"
-        swift.important = true
-        
-        let dog = ToDo()
-        dog.name = "Walk the Dog"
-        
-        return [swift,dog]
-    }
-    
     
 
     /*
@@ -54,13 +63,17 @@ class toDoTableViewController: UITableViewController {
         return cell
     }
     */
-    /*
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+        if let addVC = segue.destination as? AddToDoViewController {
+            addVC.previousVC = self
+        }
+        
+        if let completeVC = segue.destination as? CompleteToDoViewController {
+            if let toDo = sender as? ToDo {
+                completeVC.selectedToDo = toDo
+                completeVC.previousVC = self
+            }
+        }
+}
 }
